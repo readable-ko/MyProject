@@ -64,6 +64,10 @@ public class TodoMain {
 				System.out.println("D-day순으로 정렬하였습니다.");
 				TodoUtil.listAll(l,"remain_date",1);
 				
+			case "ls_Dday_desc":
+				System.out.println("D-day역순으로 정렬하였습니다.");
+				TodoUtil.listAll(l,"remain_date",0);
+				
 			case "ls_cate":
 				TodoUtil.listCateAll(l);
 				break;

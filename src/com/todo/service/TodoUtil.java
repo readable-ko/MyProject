@@ -49,16 +49,29 @@ public class TodoUtil {
 		Scanner sc = new Scanner(System.in);
 		
 		System.out.println("[항목 삭제]\n"
-				+ "삭제할 항목의 번호를 입력하시오 > ");
+				+ "삭제할 항목의 번호를 입력하시오!(여러 항목 삭제를 원하는 경우 , 로 구분하여 작성) > ");
 		
-		int index = sc.nextInt();
+		String delist = sc.nextLine().trim();
+		String[] devideDel;
+		if(delist.contains(", ")) devideDel = delist.split(", ");
+		else if(delist.contains(" ,")) devideDel = delist.split(" ,");
+		else devideDel = delist.split(",");
+		
+		System.out.println(delist + "번을 정말로 삭제하시겠습니까? 삭제하려면 (1) 아니면 (0)을 눌러주세요.");
+		int index = 0;
+		index =sc.nextInt();
 		sc.nextLine();
-
-		if(l.deleteItem(index) > 0) {
-			System.out.println("삭제되었습니다.");
-		} else {
-			System.out.println("삭제에 실패하였습니다.");
+		
+		if (index == 1) {
+			for (int i = 0; i < devideDel.length; i++) {
+				if (l.deleteItem(Integer.parseInt(devideDel[i])) > 0) {
+					System.out.println(devideDel[i] + "번이 삭제되었습니다.");
+				} else {
+					System.out.println("삭제에 실패하였습니다.");
+				}
+			}
 		}
+		else return;
 	}
 
 	public static void updateItem(TodoList l) {
@@ -103,10 +116,17 @@ public class TodoUtil {
 	
 	public static void completeItem(TodoList l, String num) {
 		
-		if(l.completeItem(num) > 0)
-			System.out.println("체크 완료하였습니다.");
-		else
-			System.out.println("체크에 실패하였습니다.");
+		String[] arr;
+		if(num.contains(", ")) arr = num.split(", ");
+		else if(num.contains(",")) arr = num.split(",");
+		else arr = num.split(" ");
+		
+		for (int i = 0; i < arr.length; i++) {
+			if (l.completeItem(arr[i]) > 0)
+				System.out.println("체크 완료하였습니다.");
+			else
+				System.out.println("체크에 실패하였습니다.");
+		}
 		
 	}
 

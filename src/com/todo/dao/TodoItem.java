@@ -15,7 +15,7 @@ public class TodoItem {
     private String category;
     private String due_date;
     private int remain_date;
-    private String todo_month;
+    private int todo_month;
 
     public TodoItem(String title, String desc, String categori, String due_date, int ID, String current_date, int is_completed){
         this.title=title;
@@ -170,11 +170,11 @@ public class TodoItem {
         
 	}
 
-	public String getTodo_month() {
+	public int getTodo_month() {
 		return todo_month;
 	}
 
-	public void setTodo_month(String todo_month) {
+	public void setTodo_month(int todo_month) {
 		this.todo_month = todo_month;
 	}
 }

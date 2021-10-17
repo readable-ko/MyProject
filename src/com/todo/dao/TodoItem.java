@@ -29,11 +29,10 @@ public class TodoItem {
         this.ID = ID;
         this.is_completed = is_completed;
         this.current_date = current_date;
-        //this.remain_date = calDateRemain(due_date);
-        
+        TodoMonth(due_date);
     }
     
-    public int calDateRemain(String due_date) {
+    private int calDateRemain(String due_date) {
     	SimpleDateFormat f = new SimpleDateFormat("yyyy/MM/dd");
         String today = f.format(new Date());
         Date now;
@@ -45,16 +44,15 @@ public class TodoItem {
 			Due = f.parse(due_date);
 			calDate = (Due.getTime() - now.getTime()) / (24*60*60*1000);
 
-	        //calDate = Math.abs(calDate);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return (int)calDate;
-		/*
-		if(calDate > 0.0)
-			return "D-" + Integer.toString((int) calDate);
-		else
-			return "D+" + Integer.toString((int) Math.abs(calDate));*/
+    }
+    
+    private void TodoMonth(String due_date) {
+    	String doMonth = due_date.substring(due_date.indexOf("/")+1, due_date.lastIndexOf("/"));
+    	this.todo_month = Integer.parseInt(doMonth);
     }
     
     public TodoItem(String title, String desc, String categori, String due_date, int ID, String current_date){
@@ -76,6 +74,7 @@ public class TodoItem {
         this.is_completed = 0;
         SimpleDateFormat f = new SimpleDateFormat("yyyy/MM/dd kk:mm:ss");
         this.current_date=f.format(new Date());
+        TodoMonth(due_date);
     }
 
 	public TodoItem(StringTokenizer st) {
@@ -140,8 +139,30 @@ public class TodoItem {
     	return ID + ". " + "[" + category + "] " + title + completed + " - " + desc + " - " + due_date + Dday + " - " + current_date;
     }
     
+	public String toDdayString() {
+		String completed = "";
+		if(is_completed == 1) 
+			completed = "[V]";
+		
+		String Dday = "[D";
+		if(remain_date > 0) Dday += "-" + remain_date + "]";
+		else if(remain_date == 0) Dday += "-the day]";
+		else Dday += "+" + Math.abs(remain_date) + "]";
+		
+		return ID + ". " + Dday + " " + title + " (" + category + ") " +  completed;
+	}
+	
     public String toSaveString() {
-    	return title + "##" + category + "##" + desc + "##" + due_date + "##" + current_date + "\n";
+		String completed = "";
+		if(is_completed == 1) 
+			completed = "[V]";
+		
+		String Dday = "[D";
+		if(remain_date > 0) Dday += "-" + remain_date + "]";
+		else if(remain_date == 0) Dday += "-the day]";
+		else Dday += "+" + Math.abs(remain_date) + "]";
+		
+		return "[" + Dday + "(~" + due_date + ")] " + title + " (" + category + ") " + desc + completed;
     }
 
 	public int getID() {
@@ -174,7 +195,7 @@ public class TodoItem {
 		return todo_month;
 	}
 
-	public void setTodo_month(int todo_month) {
-		this.todo_month = todo_month;
+	public void setTodo_month(String todo_month) {
+		TodoMonth(todo_month);
 	}
 }

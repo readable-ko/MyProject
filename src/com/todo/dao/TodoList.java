@@ -25,8 +25,8 @@ public class TodoList {
 	}
 
 	public int addItem(TodoItem t) {
-		String sql = "insert into list (title, memo, category, current_date, due_date, is_completed, remain_date)"
-				+ " values (?,?,?,?,?,?,?);";
+		String sql = "insert into list (title, memo, category, current_date, due_date, is_completed, remain_date, todo_month)"
+				+ " values (?,?,?,?,?,?,?,?);";
 		PreparedStatement pstmt;
 		int count = 0;
 		
@@ -39,6 +39,7 @@ public class TodoList {
 			pstmt.setString(5, t.getDue_date());
 			pstmt.setInt(6, t.getIs_completed());
 			pstmt.setInt(7, t.getRemain_date());
+			pstmt.setInt(8, t.getTodo_month());
 			count = pstmt.executeUpdate();
 			pstmt.close();
 		} catch (SQLException e) {
@@ -67,7 +68,7 @@ public class TodoList {
 	}
 
 	public int updateItem(TodoItem t) {
-		String sql = "update list set title=?, memo=?, category=?, current_date=?, due_date=?, remain_date=?"
+		String sql = "update list set title=?, memo=?, category=?, current_date=?, due_date=?, remain_date=?, todo_month=?"
 				+ "where id = ?;";
 		PreparedStatement pstmt;
 		int count = 0;
@@ -80,7 +81,8 @@ public class TodoList {
 			pstmt.setString(4, t.getCurrent_date());
 			pstmt.setString(5, t.getDue_date());
 			pstmt.setInt(6, t.getRemain_date());
-			pstmt.setInt(7, t.getID());
+			pstmt.setInt(7, t.getTodo_month());
+			pstmt.setInt(8, t.getID());
 			count = pstmt.executeUpdate();
 			pstmt.close();
 		} catch (SQLException e) {
@@ -166,10 +168,11 @@ public class TodoList {
 	public int completeItem(String num) {
 		String sql = "update list set is_completed = ? where id = ?;";
 		PreparedStatement pstmt;
+		int button = getCompID(num);
 		int count = 0;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, 1);
+			pstmt.setInt(1, button);
 			pstmt.setString(2, num);
 			count = pstmt.executeUpdate();
 			pstmt.close();
@@ -177,6 +180,24 @@ public class TodoList {
 			e.printStackTrace();
 		}
 		return count;
+	}
+	
+	public int getCompID(String ID) {
+		String sql = "SELECT * FROM list WHERE ID = ?";
+		PreparedStatement pstmt;
+		int ID_comp = 0;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, ID);
+			ResultSet rs = pstmt.executeQuery();
+			
+			ID_comp = rs.getInt("is_completed");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		if(ID_comp == 1) return 0;
+		else return 1;
 	}
 	
 	public ArrayList<TodoItem> getList(String keyword) {
@@ -225,7 +246,35 @@ public class TodoList {
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
 				int is_completed = rs.getInt("is_completed");
-				TodoItem t = new TodoItem(title, description, category, due_date,id,current_date,is_completed);
+				TodoItem t = new TodoItem(title, description, category, due_date, id, current_date, is_completed);
+				t.setRemain_date(due_date);
+				updateItem(t);
+				list.add(t);
+			}
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public ArrayList<TodoItem> getListMonth(String keyword) {
+		ArrayList<TodoItem> list = new ArrayList<TodoItem>();
+		PreparedStatement pstmt;
+		try {
+			String sql = "SELECT * FROM list WHERE todo_month = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, keyword);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				int id = rs.getInt("id");
+				String category = rs.getString("category");
+				String title = rs.getString("title");
+				String description = rs.getString("memo");
+				String due_date = rs.getString("due_date");
+				String current_date = rs.getString("current_date");
+				int is_completed = rs.getInt("is_completed");
+				TodoItem t = new TodoItem(title, description, category, due_date, id, current_date, is_completed);
 				t.setRemain_date(due_date);
 				updateItem(t);
 				list.add(t);

@@ -168,6 +168,31 @@ public class TodoUtil {
 		}
 	}
 	
+	public static void listDay(TodoList l, String orderby, int ordering) {
+		System.out.printf("[전체 목록, 총 %d개]\n",l.getCount());
+		for (TodoItem item : l.getOrderedList(orderby, ordering)) {
+			System.out.println(item.toDdayString());
+		}
+	}
+	
+	public static void listMonth(TodoList l) {
+		
+		for (int i = 1; i <= 12; i++) {
+			ArrayList<TodoItem> temp = l.getListMonth(Integer.toString(i));
+			if (!temp.isEmpty()) {
+				System.out.printf("\n[%d월]\n", i);
+				for (TodoItem item : temp) {
+					System.out.println(item.toDdayString());
+				}
+			}
+		}
+		
+		System.out.println("\ntxt파일로 저장하시겠습니까?(Y/N) > ");
+		Scanner sc = new Scanner(System.in);
+		String answer = sc.nextLine().trim();
+		if(answer.contentEquals("Y") == true) saveList(l, "Monthly.txt");
+	}
+	
 	public static void listCateAll(TodoList l) {
 		int count = 0;
 		for(String item : l.getCategories()) {
@@ -180,11 +205,25 @@ public class TodoUtil {
 	public static void saveList(TodoList l, String filename) {
 		try {
 			Writer w = new FileWriter(filename);
-			for(TodoItem item : l.getList()) {
-				w.write(item.toSaveString());
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			String thisYear = Integer.toString(cal.get(Calendar.YEAR));
+			
+			for (int i = 1; i <= 12; i++) {
+				ArrayList<TodoItem> temp = l.getListMonth(Integer.toString(i));
+				if (!temp.isEmpty()) {
+					w.write("\n[" + i + "월]\n");
+					for (TodoItem item : temp) {
+						if(item.getDue_date().contains(thisYear)) {
+							w.write(item.toSaveString());
+							w.write("\n");
+						}
+					}
+				}
 			}
 			System.out.println("데이터 저장 완료!!");
 			w.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -62,11 +62,18 @@ public class TodoMain {
 				
 			case "ls_Dday":
 				System.out.println("D-day순으로 정렬하였습니다.");
-				TodoUtil.listAll(l,"remain_date",1);
+				TodoUtil.listDay(l,"remain_date",0);
+				break;
 				
 			case "ls_Dday_desc":
 				System.out.println("D-day역순으로 정렬하였습니다.");
-				TodoUtil.listAll(l,"remain_date",0);
+				TodoUtil.listDay(l,"remain_date",1);
+				break;
+				
+			case "ls_Month":
+				System.out.println("달별로 출력하였습니다.");
+				TodoUtil.listMonth(l);
+				break;
 				
 			case "ls_cate":
 				TodoUtil.listCateAll(l);
@@ -105,6 +112,5 @@ public class TodoMain {
 			}
 			
 		} while (!quit);
-		TodoUtil.saveList(l, "todolist.txt");
 	}
 }

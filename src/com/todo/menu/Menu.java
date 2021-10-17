@@ -13,6 +13,9 @@ public class Menu {
         System.out.println("ls_name_desc - 내림차순 정렬");
         System.out.println("ls_date - 날짜순 정렬");
         System.out.println("ls_date_desc - 날짜역순 정렬");
+        System.out.println("ls_Dday - D-day 남은 날짜순으로 정렬");
+        System.out.println("ls_Dday_desc - D-day 역순으로 정렬");
+        System.out.println("ls_Month - 달순으로 정렬");
         System.out.println("ls_cate - 카테고리순 정렬");
         System.out.println("ls_comp - 완료항목만 정렬");
         System.out.println("comp <키워드> - <키워드> 항목 완료 체크");
